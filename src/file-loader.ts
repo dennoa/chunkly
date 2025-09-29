@@ -26,7 +26,11 @@ export class FileLoader {
   private async getDataFromUrl(source: string): Promise<any> {
     const res = await fetch(source);
     if (!res.ok) throw new Error(`Failed to fetch ${source}: ${res.statusText}`);
-    return this.isText() ? res.text() : res.blob();
+    if (this.isText()) {
+      return res.text();
+    }
+    const data = await res.arrayBuffer();
+    return Buffer.from(data);
   }
   
   private getDataFromFile(source: string): Promise<any> {
