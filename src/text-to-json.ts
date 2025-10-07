@@ -5,6 +5,7 @@ export interface TextToJsonOptions {
   minOverlapWords: number;
   maxOverlapWords: number;
   minWordsPerChunk: number;
+  maxWordsPerChunk: number;
 }
 
 export class TextToJson {
@@ -17,7 +18,7 @@ export class TextToJson {
     return this.getChunks(text, docToUse).map((chunk, chunkIdx) => ({
       text: chunk.text.trim(),
       source: docOpts.source,
-      lookup: chunk.lookup || '',
+      ref: chunk.ref || '',
       timestamp,
       chunkIdx,
     }));
@@ -26,23 +27,24 @@ export class TextToJson {
   private isSentenceEnd = (text: string) => text.endsWith('.') || text.endsWith('!') || text.endsWith('?');
 
   private getChunks(textStr: string, docOpts: DocumentOptions): WorkingChunk[] {
-    const { targetWordsPerChunk, minWordsPerChunk, minOverlapWords, maxOverlapWords } = this.options;
+    const { targetWordsPerChunk, minWordsPerChunk, minOverlapWords, maxOverlapWords, maxWordsPerChunk } = this.options;
     let toIdx = 0;
     return docOpts.sections!.reduce((acc: WorkingChunk[], section: DocumentSection) => {
-      const { lookup } = section;
+      const { ref } = section;
       let fromIdx = section.from ? textStr.indexOf(section.from, toIdx) : toIdx;
       toIdx = section.to ? textStr.indexOf(section.to, fromIdx + 1) : textStr.length;
       const words = textStr.substring(fromIdx, toIdx).split(' ');
       let startIdx = 0;
       while (startIdx < words.length) {
         let endIdx = startIdx + targetWordsPerChunk; // Target end
-        while (endIdx < words.length && !this.isSentenceEnd(words[endIdx])) endIdx++; // Extend to sentence end
-        endIdx++; // Include the sentence end      
+        const maxEndIdx = Math.min(startIdx + maxWordsPerChunk, words.length);
+        while (endIdx < maxEndIdx && !this.isSentenceEnd(words[endIdx])) endIdx++; // Extend to sentence end
+        if (endIdx < maxEndIdx) endIdx++; // Include the sentence end      
         if (endIdx + minWordsPerChunk >= words.length) {
           endIdx = words.length; // Next chunk too small so extend this chunk
         }
         const text = words.slice(startIdx, endIdx).join(' ').trim();
-        if (text.length > 0) acc.push({ lookup, text });
+        if (text.length > 0) acc.push({ ref, text });
         startIdx = endIdx;
         if (endIdx < words.length) {
           startIdx = endIdx - minOverlapWords; // Start with minimum overlap

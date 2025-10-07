@@ -1,7 +1,7 @@
 export interface DocumentSection {
   from?: string;
   to?: string;
-  lookup?: string;
+  ref?: string;
 }
 
 export type ContentType = 'docx' | 'html' | 'pdf' | 'txt';
@@ -14,12 +14,12 @@ export interface DocumentOptions {
 
 export interface WorkingChunk {
   text: string;
-  lookup?: string;
+  ref?: string;
 }
 
 export interface Chunk extends WorkingChunk {
   source: string;
-  lookup: string;
+  ref: string;
   timestamp: string;
   chunkIdx: number;
 }

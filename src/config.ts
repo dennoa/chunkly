@@ -7,6 +7,7 @@ export const config = {
     minOverlapWords: parseInt(process.env.CHUNKLY_MIN_OVERLAP_WORDS || '10'),
     maxOverlapWords: parseInt(process.env.CHUNKLY_MAX_OVERLAP_WORDS || '20'),
     minWordsPerChunk: parseInt(process.env.CHUNKLY_MIN_WORDS_PER_CHUNK || '50'),
+    maxWordsPerChunk: parseInt(process.env.CHUNKLY_MAX_WORDS_PER_CHUNK || '200'),
   },
 };
 

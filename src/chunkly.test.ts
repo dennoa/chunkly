@@ -4,11 +4,12 @@ import { DocumentOptions } from './chunkly-types';
 
 describe('Chunkly', () => {
   let chunkly: Chunkly;
-  let options: ChunklyOptions = {
+  const options: ChunklyOptions = {
     targetWordsPerChunk: 100,
-    minOverlapWords:10,
+    minOverlapWords: 5,
     maxOverlapWords: 20,
     minWordsPerChunk: 50,
+    maxWordsPerChunk: 200,
   }
 
   beforeEach(() => {
@@ -28,13 +29,26 @@ describe('Chunkly', () => {
     });
   });
 
+  it('should chunk up another pdf document', async () => {
+    const docOpts: DocumentOptions = {
+      source: path.normalize(path.join(__dirname, '..', 'test-docs', 'test2-pdf.pdf')),
+      type: 'pdf',
+    };
+    const chunks = await chunkly.chunkItUp(docOpts);
+    expect(chunks.length).toBe(19);
+    chunks.forEach((chunk, idx) => {
+      expect(chunk.source).toMatch(/test2-pdf\.pdf$/);
+      expect(chunk.chunkIdx).toBe(idx);
+    });
+  });
+
   it('should chunk up a word document', async () => {
     const docOpts: DocumentOptions = {
       source: path.normalize(path.join(__dirname, '..', 'test-docs', 'test-docx.docx')),
       type: 'docx',
     };
     const chunks = await chunkly.chunkItUp(docOpts);
-    expect(chunks.length).toBe(4);
+    expect(chunks.length).toBe(5);
     chunks.forEach((chunk, idx) => {
       expect(chunk.source).toMatch(/test-docx\.docx$/);
       expect(chunk.chunkIdx).toBe(idx);
@@ -46,10 +60,10 @@ describe('Chunkly', () => {
       source: path.normalize(path.join(__dirname, '..', 'test-docs', 'test-docx.docx')),
       type: 'docx',
       sections: [
-        { from: 'Evidence of consultation and collaboration', to: 'Evidence of assessed individual needs', lookup: 'Parents / Guardians' },
-        { to: 'Evidence that adjustments are being provided', lookup: 'Individual Needs' },
-        { to: 'Evidence that adjustments provided to the student', lookup: 'Adjustments Provided' },
-        { lookup: 'Adjustments Monitored' },
+        { from: 'Evidence of consultation and collaboration', to: 'Evidence of assessed individual needs', ref: 'Parents / Guardians' },
+        { to: 'Evidence that adjustments are being provided', ref: 'Individual Needs' },
+        { to: 'Evidence that adjustments provided to the student', ref: 'Adjustments Provided' },
+        { ref: 'Adjustments Monitored' },
       ],
     };
     const chunks = await chunkly.chunkItUp(docOpts);
