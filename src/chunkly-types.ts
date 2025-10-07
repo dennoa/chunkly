@@ -7,6 +7,7 @@ export interface DocumentSection {
 export type ContentType = 'docx' | 'html' | 'pdf' | 'txt';
 
 export interface DocumentOptions {
+  buffer?: Buffer;
   source: string;
   type: ContentType;
   sections?: DocumentSection[];

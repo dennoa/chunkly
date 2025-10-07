@@ -1,3 +1,4 @@
+import fs from 'fs/promises';
 import path from 'path';
 import { Chunkly, ChunklyOptions } from './chunkly';
 import { DocumentOptions } from './chunkly-types';
@@ -70,6 +71,21 @@ describe('Chunkly', () => {
     expect(chunks.length).toBe(4);
     chunks.forEach((chunk, idx) => {
       expect(chunk.source).toMatch(/test-docx\.docx$/);
+      expect(chunk.chunkIdx).toBe(idx);
+    });
+  });
+
+  it('should chunk up a pdf document from buffer', async () => {
+    const file = await fs.readFile(path.normalize(path.join(__dirname, '..', 'test-docs', 'test-pdf.pdf')));
+    const docOpts: DocumentOptions = {
+      buffer: file,
+      source: 'test-pdf.pdf',
+      type: 'pdf',
+    };
+    const chunks = await chunkly.chunkItUp(docOpts);
+    expect(chunks.length).toBe(3);
+    chunks.forEach((chunk, idx) => {
+      expect(chunk.source).toEqual('test-pdf.pdf');
       expect(chunk.chunkIdx).toBe(idx);
     });
   });

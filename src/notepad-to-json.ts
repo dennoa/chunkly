@@ -13,7 +13,7 @@ export class NotepadToJson {
 
   public async chunkItUp(docOpts: DocumentOptions): Promise<Chunk[]> {
     try {
-      const text = await this.fileLoader.load(docOpts.source);
+      const text = docOpts.buffer ? docOpts.buffer?.toString('utf-8') : await this.fileLoader.load(docOpts.source);
       return this.textToJson.chunkItUp(text, docOpts);
     } catch (error: any) {
       logger.error(`Error parsing txt: ${error.message}`);

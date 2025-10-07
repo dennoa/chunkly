@@ -24,7 +24,7 @@ export class HtmlToJson {
 
   public async chunkItUp(docOpts: DocumentOptions): Promise<Chunk[]> {
     try {
-      const html = await this.fileLoader.load(docOpts.source);
+      const html = docOpts.buffer ? docOpts.buffer?.toString('utf-8') : await this.fileLoader.load(docOpts.source);
       const text = htmlToText(html, this.htmlToTextOptions);
       return this.textToJson.chunkItUp(text, docOpts);
     } catch (error: any) {

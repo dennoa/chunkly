@@ -14,7 +14,7 @@ export class WordToJson {
 
   public async chunkItUp(docOpts: DocumentOptions): Promise<Chunk[]> {
     try {
-      const buffer = await this.fileLoader.load(docOpts.source);
+      const buffer = docOpts.buffer ? docOpts.buffer : await this.fileLoader.load(docOpts.source)
       const result = await mammoth.extractRawText({ buffer });
       return this.textToJson.chunkItUp(result.value, docOpts);
     } catch (error: any) {
