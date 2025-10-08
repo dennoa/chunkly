@@ -21,6 +21,5 @@ export interface WorkingChunk {
 export interface Chunk extends WorkingChunk {
   source: string;
   ref: string;
-  timestamp: string;
   chunkIdx: number;
 }

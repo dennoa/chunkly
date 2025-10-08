@@ -13,13 +13,11 @@ export class TextToJson {
 
   public chunkItUp(rawText: string, docOpts: DocumentOptions): Chunk[] {
     const text = rawText.replace(/\s+/g, ' ').trim(); // Clean up whitespace
-    const timestamp = new Date().toJSON();
     const docToUse = docOpts.sections?.length ? docOpts : { ...docOpts, sections: [{}] };
     return this.getChunks(text, docToUse).map((chunk, chunkIdx) => ({
       text: chunk.text.trim(),
       source: docOpts.source,
       ref: chunk.ref || '',
-      timestamp,
       chunkIdx,
     }));
   }
