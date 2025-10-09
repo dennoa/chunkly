@@ -11,7 +11,7 @@ describe('Chunkly', () => {
     maxOverlapWords: 20,
     minWordsPerChunk: 50,
     maxWordsPerChunk: 200,
-  }
+  };
 
   beforeEach(() => {
     chunkly = new Chunkly(options);
